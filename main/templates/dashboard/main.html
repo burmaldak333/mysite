@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="https://jsdelivr.net">
+    <style>
+        .admin-sidebar { background-color: #212529; min-height: 100vh; color: white; }
+        .nav-link-custom { color: #adbcbc; transition: all 0.2s; }
+        .nav-link-custom:hover, .nav-link-custom.active { color: white; background-color: #343a40; border-radius: 6px; }
+        .img-thumbnail-custom { max-width: 60px; max-height: 40px; object-fit: cover; }
+    </style>
+</head>
+<body class="bg-light">
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Сайдбар -->
+            <div class="col-md-3 col-lg-2 px-3 py-4 admin-sidebar shadow">
+                <div class="d-flex align-items-center mb-4 px-2">
+                    <i class="bi bi-sliders2 fs-3 text-warning me-2"></i>
+                    <span class="fs-4 fw-bold">Панель</span>
+                </div>
+                <hr>
+                <ul class="nav flex-column gap-2">
+                    <li class="nav-item">
+                        <a href="{% url 'custom_dashboard' %}" class="nav-link nav-link-custom active p-2 d-flex align-items-center"><i class="bi bi-layers me-2"></i> Структура</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'add_section' %}" class="nav-link nav-link-custom p-2 d-flex align-items-center"><i class="bi bi-folder-plus me-2"></i> Добавить раздел</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'add_block' %}" class="nav-link nav-link-custom p-2 d-flex align-items-center"><i class="bi bi-file-earmark-plus me-2"></i> Добавить блок</a>
+                    </li>
+                    <!-- КНОПКА НА САЙТ (NEW) -->
+                    <li class="nav-item mt-4">
+                        <a href="{% url 'index_page' %}" class="nav-link nav-link-custom p-2 d-flex align-items-center text-info"><i class="bi bi-box-arrow-left me-2"></i> Вернуться на сайт</a>
+                    </li>
+                </ul>
+                <hr class="mt-5">
+                <div class="px-2 small text-white-50">
+                    <i class="bi bi-person-circle me-1"></i> {{ request.user.username }}
+                    <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger w-100 mt-3 fw-bold">Выйти</a>
+                </div>
+            </div>
+
+            <!-- Рабочая область -->
+            <div class="col-md-9 col-lg-10 px-md-4 py-4">
+                <h1 class="h2 fw-bold text-dark mb-4">Управление разделами и блоками</h1>
+
+                {% for section in sections %}
+                    <div class="card shadow-sm mb-4 border-0">
+                        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-folder2-open me-2 text-warning"></i> {{ section.title }}</h5>
+                            <span class="badge bg-secondary">Позиция: {{ section.position }}</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light text-secondary small text-uppercase">
+                                        <tr>
+                                            <th class="ps-3">ID</th>
+                                            <th>Превью</th>
+                                            <th>Заголовок блока</th>
+                                            <th>Содержимое</th>
+                                            <th class="text-center">Позиция</th>
+                                            <th class="text-end pe-3">Действия</th> <!-- КНОПКИ ДЕЙСТВИЙ (NEW) -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for block in section.blocks.all %}
+                                            <tr>
+                                                <td class="ps-3 text-muted">#{{ block.id }}</td>
+                                                <td>
+                                                    {% if block.image %}
+                                                        <img src="{{ block.image.url }}" class="img-thumbnail img-thumbnail-custom">
+                                                    {% else %}
+                                                        <div class="bg-light text-center rounded py-1 text-muted small"><i class="bi bi-image"></i></div>
+                                                    {% endif %}
+                                                </td>
+                                                <td><strong>{{ block.title|default:"—" }}</strong></td>
+                                                <td><span class="text-secondary small">{{ block.content|truncatechars:60 }}</span></td>
+                                                <td class="text-center">{{ block.position }}</td>
+                                                <!-- ДЕЙСТВИЯ (NEW) -->
+                                                <td class="text-end pe-3">
+                                                    <a href="{% url 'edit_block' block.id %}" class="btn btn-sm btn-outline-dark me-1" title="Редактировать"><i class="bi bi-pencil"></i></a>
+                                                    <a href="{% url 'delete_block' block.id %}" class="btn btn-sm btn-outline-danger" title="Удалить"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr><td colspan="6" class="text-center py-3 text-muted">В этом разделе нет блоков.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

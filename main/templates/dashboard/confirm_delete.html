@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Подтверждение удаления</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="card p-4 shadow-sm text-center" style="max-width: 450px; border-radius: 12px;">
+        <h3 class="text-danger fw-bold mb-3">Вы уверены?</h3>
+        <p class="text-secondary mb-4">Вы действительно хотите удалить {{ type }} <strong>"{{ object.title|default:object.id }}"</strong>? Это действие нельзя будет отменить.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100 py-2 fw-bold mb-2">Да, удалить навсегда</button>
+            <a href="{% url 'custom_dashboard' %}" class="btn btn-outline-secondary w-100 py-2">Отмена</a>
+        </form>
+    </div>
+</body>
+</html>

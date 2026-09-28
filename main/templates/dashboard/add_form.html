@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="https://jsdelivr.net">
+    <style>
+        body { background-color: #f4f6f9; }
+        .form-card { border: none; border-radius: 12px; }
+        .form-card p { margin-bottom: 1.25rem; }
+        .form-card label { font-weight: 600; color: #495057; font-size: 0.9rem; margin-bottom: 0.4rem; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="mb-3">
+                    <a href="{% url 'custom_dashboard' %}" class="btn btn-link link-secondary p-0 text-decoration-none">
+                        <i class="bi bi-arrow-left me-1"></i> Назад в панель управления
+                    </a>
+                </div>
+
+                <div class="card form-card shadow-sm p-4 bg-white">
+                    <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+                        <i class="bi bi-pencil-square text-success fs-3 me-2"></i>
+                        <h3 class="mb-0 fw-bold text-dark">{{ title }}</h3>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="django-form-fields">
+                            {{ form.as_p }}
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4 pt-2 border-top">
+                            <button type="submit" class="btn btn-success w-100 py-2 fw-bold">Сохранить</button>
+                            <a href="{% url 'custom_dashboard' %}" class="btn btn-light w-50 py-2 text-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- СКРИПТ АВТОЗАПОЛНЕНИЯ SLUG (NEW) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleInput = document.querySelector('input[name="title"]');
+            const slugInput = document.querySelector('input[name="slug"]');
+
+            if (titleInput && slugInput) {
+                titleInput.addEventListener('input', function() {
+                    let text = titleInput.value.toLowerCase();
+
+                    // Функция транслитерации кириллицы
+                    const mapping = {
+                        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+                        ' ':'-','_':'-'
+                    };
+
+                    let slug = '';
+                    for (let i = 0; i < text.length; i++) {
+                        let ch = text Irish ? text[i] : text[i];
+                        if (mapping[ch] !== undefined) {
+                            slug += mapping[ch];
+                        } else if (/[a-z0-9-]/.test(ch)) {
+                            slug += ch;
+                        }
+                    }
+                    // Убираем двойные дефисы
+                    slugInput.value = slug.replace(/-+/g, '-').replace(/^-|-$/g, '');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

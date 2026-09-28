@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница сайта</title>
+    <!-- Подключаем Bootstrap 5 для красивого интерфейса -->
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <style>
+        .section-block {
+            background-color: #ffffff;
+            transition: transform 0.2s;
+        }
+        .section-block:hover {
+            transform: translateY(-5px);
+        }
+        .block-image {
+            max-height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <!-- Навигационная панель (Шапка сайта) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-5">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'index_page' %}">MyDjangoSite</a>
+            <div class="ms-auto">
+                {% if request.user.is_authenticated %}
+                    <span class="text-white-50 me-3">Привет, <strong>{{ request.user.username }}</strong>!</span>
+
+                    <!-- Если зашел админ, показываем ему кнопку перехода в кастомную панель -->
+                    {% if request.user.username == 'admin_super' or request.user.is_superuser %}
+                        <a href="{% url 'custom_dashboard' %}" class="btn btn-warning btn-sm me-2">В админку</a>
+                    {% endif %}
+
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">Выйти</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">Войти на сайт</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент сайта -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <!-- Внешний цикл: Перебираем динамические Разделы -->
+                {% for section in sections %}
+                    <div class="mb-5">
+                        <h2 class="border-bottom pb-2 text-primary fw-bold">{{ section.title }}</h2>
+
+                        <!-- Внутренний цикл: Выводим Блоки, привязанные к текущему разделу -->
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-1">
+                            {% for block in section.blocks.all %}
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm section-block">
+
+                                        <!-- Вывод изображения блока, если оно загружено -->
+                                        {% if block.image %}
+                                            <img src="{{ block.image.url }}" class="card-img-top block-image" alt="{{ block.title }}">
+                                        {% endif %}
+
+                                        <div class="card-body">
+                                            {% if block.title %}
+                                                <h5 class="card-title fw-bold text-dark">{{ block.title }}</h5>
+                                            {% endif %}
+                                            <!-- Фильтр linebreaks сохраняет переносы строк из Textarea админки -->
+                                            <p class="card-text text-secondary">{{ block.content|linebreaks }}</p>
+                                        </div>
+
+                                        <div class="card-footer bg-transparent border-0 text-muted small text-end">
+                                            Позиция: {{ block.position }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <!-- Если в разделе пока нет блоков -->
+                                <div class="col-12">
+                                    <p class="text-muted italic ps-2">В данном разделе еще нет информационных блоков.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <!-- Если на сайте вообще нет разделов -->
+                    <div class="text-center py-5 card shadow-sm bg-white">
+                        <h3 class="text-muted">Контент еще не добавлен</h3>
+                        <p class="text-secondary">Зайдите под учетной записью администратора, чтобы наполнить сайт разделами и блоками.</p>
+                        {% if not request.user.is_authenticated %}
+                            <div class="mt-3">
+                                <a href="{% url 'login' %}" class="btn btn-primary">Авторизоваться как админ</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипты Bootstrap (необходимы для интерактивных элементов, если потребуются) -->
+    <script src="https://jsdelivr.net"></script>
+</body>
+</html>
