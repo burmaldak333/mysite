@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+from upstash_redis import Redis
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -127,7 +128,7 @@ MAILERS = {
     },
 }
 
-IS_DOCKER = os.environ.get('REDIS_URL') is not None
+REDIS_HOST = os.environ.get("REDIS_HOST", "127.0.0.1")
 
 CACHES = {
     'default': {
