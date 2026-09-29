@@ -130,13 +130,16 @@ MAILERS = {
 IS_DOCKER = os.environ.get('REDIS_URL') is not None
 
 CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        # Если в докере — берем хост 'redis', если локально в Windows — '127.0.0.1'
-        "LOCATION": "redis://redis:6379" if IS_DOCKER else "redis://127.0.0.1:6379",
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 
 # Для докера важно разрешить хосты:
 ALLOWED_HOSTS = ['*']
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
