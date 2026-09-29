@@ -133,14 +133,9 @@ REDIS_HOST = os.environ.get("REDIS_HOST", "127.0.0.1")
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.environ.get('UPSTASH_REDIS_REST_URL'),
+        'LOCATION': 'rediss://default:' + os.environ.get('UPSTASH_REDIS_REST_TOKEN', '') + '@' + os.environ.get('UPSTASH_REDIS_REST_URL', '').replace('https://', ''),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'PARSER_KWARGS': {'encoding': 'utf8'},
-            'SOCKET_CONNECT_TIMEOUT': 5,
-            'SOCKET_TIMEOUT': 5,
-            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-            'IGNORE_EXCEPTIONS': True,
         }
     }
 }
